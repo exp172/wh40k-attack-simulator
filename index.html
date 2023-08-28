@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="" />
+    <link rel="stylesheet" type="text/css" href="./css/main.css" />
+    <link rel="icon" href="favicon.ico" />
+  </head>
+  <body>
+    <div class="container">
+        <div class="title">Warhammer 40k Attack Simulator</div>
+        <div class="note">
+            <div>V1.0</div>
+            <div>
+                Welcome to the Warhammer 40k attack simulator! This page lets you simulate an attack against an enemy unit. Use the drop downs to select your faction, your unit, and (for the attacker) which weapon the unit is using.
+                <br/>
+                In V1 the only step you might need to take is changing the 'Number of Weapons' section of some of the weapons, as the way these were taken from the idnex cards means they aren't accurate.
+                <br/>
+                The size of the defending unit also doesnt take into account units made up of different models. For example an Ork Nob having 2 wounds or some characters who have in built extra people (this will happen at some point)
+                <br/>
+                The data was last updated on 26/08/2023
+            </div>
+        </div>
+        <div class="bold">Simulations to run?</div>
+        <input id="simulations" value="1000"/>
+        <!-- <input id="simulations" value="1"/> -->
+        <div class="flex_container">
+            <div class="attacker">
+                <div class="bold">Attacker</div>
+                <div class="select_container">
+                    <select name="attackersFaction" id="attackers_faction_select"></select>
+                    <select name="attackers" id="attackers_select"></select>
+                    <select name="attackersWeapon" id="attackers_weapon_select"></select>
+                </div>
+                <div class="label">Number of Weapons</div>
+                <input id="attackerCount" value="10"/>
+                <div class="label">A</div>
+                <input id="attacks" value="1"/>
+                <div class="label">WS/BS</div>
+                <input id="wbs" value="4"/>
+                <div class="label">S</div>
+                <input id="strength" value="4"/>
+                <div class="label">AP</div>
+                <input id="ap" value="0"/>
+                <div class="label">D</div>
+                <input id="damage" value="1"/>
+            </div>
+            <div class="defender">
+                <div class="bold">Defender</div>
+                <div class="select_container">
+                    <select name="defendersFaction" id="defenders_faction_select"></select>
+                    <select name="defenders" id="defenders_select"></select>
+                </div>
+                <div class="label">Number of Defenders</div>
+                <input id="defenderCount" value="10"/>
+                <div class="label">T</div>
+                <input id="toughness" value="4"/>
+                <div class="label">SV</div>
+                <input id="save" value="4"/>
+                <div class="label">InvSv</div>
+                <input id="invul" value="0"/>
+                <div class="label">W</div>
+                <input id="wounds" value="1"/>
+                <div class="label">FnP</div>
+                <input id="fnp" />
+            </div>
+        </div>
+        <div class="bold">Scenario Modifiers</div>
+        <div class="flex_container scenario_modifier_total_container" id="scenarioModifiers">
+            <div class="scenarioAttacker">
+                <div class="scenario_modifier" id="halfRange"><input type="checkbox" id="halfRangeInput" /> Within Half Range?</div>
+                <div class="scenario_modifier" id="charged"><input type="checkbox" id="chargedInput" /> Attacker charged?</div>
+                <div class="scenario_modifier" id="los"><input type="checkbox" id="losInput" /> Has Line of Sight?</div>
+                <div class="scenario_modifier" id="moved"><input type="checkbox" id="movedInput" /> Attacker has moved?</div>
+            </div>
+            <div class="scenarioDefender">
+            </div>
+        </div>
+        <div class="bold">Faction Modifiers</div>
+        <div class="flex_container faction_modifier_total_container" id="factionModifiers">
+            <div class="factionAttacker">
+                <div id="attacker_faction-adeptusAstartes" class="faction_modifier_container">
+                    <div class="bold">Adeptus Astartes</div>
+                    <div><input type="checkbox" id="adeptusAstartesArmyRuleAttacker" /> Army Rule - Oath of Moment</div>
+                </div>
+                <div id="attacker_faction-adeptaSororitas" class="faction_modifier_container">
+                    <div class="bold">Adepta Sororitas</div>
+                    <div><input type="checkbox" id="adeptaSororitasDetachmentBoM" /> Detachment - Blood of Martyrs (below starting strength)</div>
+                    <div><input type="checkbox" id="adeptaSororitasDetachmentBoMHalf" /> Detachment - Blood of Martyrs (below half strength)</div>
+                </div>
+                <div id="attacker_faction-adeptusCustodes" class="faction_modifier_container">
+                    <div class="bold">Adeptus Custodes</div>
+                    <div><input type="checkbox" id="custodesArmyRuleDacatari" /> Army Rule - Martial Ka'tah - Dacatari</div>
+                    <div><input type="checkbox" id="custodesArmyRuleRendax" /> Army Rule - Martial Ka'tah - Rendax</div>
+                </div>
+                <div id="attacker_faction-adeptusMechanicus" class="faction_modifier_container">
+                    <div class="bold">Adeptus Mechanicus</div>
+                    <div><input type="checkbox" id="mechanicusArmyRuleAttackerProtector" /> Army Rule - Protector Imperative</div>
+                    <div><input type="checkbox" id="mechanicusArmyRuleConqueror" /> Army Rule - Conqueror Immperative (enemy unit within deployment zone)</div>
+                </div>
+                <div id="attacker_faction-aeldari" class="faction_modifier_container">
+                    <div class="bold">Aeldari</div>
+                    <div><input type="checkbox" id="aeldariDetachmentUF" /> Detachment - Unparalleled Foresight</div>
+                </div>
+                <div id="attacker_faction-agentsoftheImperium" class="faction_modifier_container">
+                    <div class="bold">Agents of the Imperium</div>
+                    
+                </div>
+                <div id="attacker_faction-astraMilitarum" class="faction_modifier_container">
+                    <div class="bold">Astra Militarum</div>
+                    <div><input type="checkbox" id="astraMilitarumArmyRuleAttackerBayonets" /> Army Rule - Fix Bayonets!</div>
+                    <div><input type="checkbox" id="astraMilitarumArmyRuleAttackerAim" /> Army Rule - Take Aim!</div>
+                    <div><input type="checkbox" id="astraMilitarumArmyRuleAttackerFire" /> Army Rule - First Rank, Fire! Second Rank, Fire!</div>
+                    <div><input type="checkbox" id="astraMilitarumDetachmentBornSoldiers" /> Detachment - Born Soldiers (unit didnt move)</div>
+                </div>
+                <div id="attacker_faction-blackTemplars" class="faction_modifier_container">
+                    <div class="bold">Black Templars</div>
+                    <div><input type="checkbox" id="blackTemplarsDetachmentTemplarVowsUnclean" /> Detachment - Suffer Not the Unclean to Live</div>
+                    <div><input type="checkbox" id="blackTemplarsDetachmentTemplarVowsWitchAttacker" /> Detachment - Abhor the Witch, Destroy the Witch</div>
+                    <div><input type="checkbox" id="blackTemplarsDetachmentTemplarVowsUncleanChallenge" /> Detachment - Accept Any Challenge, No Matter the Odds</div>
+                </div>
+                <div id="attacker_faction-bloodAngels" class="faction_modifier_container">
+                    <div class="bold">Blood Angels</div>
+                    <div><input type="checkbox" id="bloodAngelsDetachmentThirst" /> Detachment - The Red Thirst (this unit charged)</div>
+                </div>
+                <div id="attacker_faction-chaosDaemons" class="faction_modifier_container">
+                    <div class="bold">Chaos Daemons</div>
+                    
+                </div>
+                <div id="attacker_faction-chaosKnights" class="faction_modifier_container">
+                    <div class="bold">Chaos Knights</div>
+                    <div><input type="checkbox" id="chaosKnightsArmyRuleAttackerDoom" /> Army Rule - Doom and Darkness (Defender is battle-shocked)</div>
+                </div>
+                <div id="attacker_faction-chaosSpaceMarines" class="faction_modifier_container">
+                    <div class="bold">Chaos Space Marines</div>
+                    <div><input type="checkbox" id="CSMArmyRuleDarkPactLethal" /> Army Rule - Dark Pact Lethal Hits</div>
+                    <div><input type="checkbox" id="CSMArmyRuleDarkPactSustained" /> Army Rule - Dark Pact Sustained Hits</div>
+                    <div><input type="checkbox" id="CSMDetachmentMarkKhorne" /> Detachment - Mark of Khorne</div>
+                    <div><input type="checkbox" id="CSMDetachmentMarkTzeentch" /> Detachment - Mark of Tzeentch</div>
+                    <div><input type="checkbox" id="CSMDetachmentMarkNurgle" /> Detachment - Mark of Nurgle</div>
+                    <div><input type="checkbox" id="CSMDetachmentMarkSlaanesh" /> Detachment - Mark of Slaanesh</div>
+                    <div><input type="checkbox" id="CSMDetachmentMarkUndivided" /> Detachment - Mark of Chaos Undivided</div>
+                </div>
+                <div id="attacker_faction-darkAngels" class="faction_modifier_container">
+                    <div class="bold">Dark Angels</div>
+                    
+                </div>
+                <div id="attacker_faction-deathGuard" class="faction_modifier_container">
+                    <div class="bold">Death Guard</div>
+                    <div><input type="checkbox" id="deathGuardArmyRuleGift" /> Army Rule - Nurgles Gift (defender in contagion range)</div>
+                </div>
+                <div id="attacker_faction-deathwatch" class="faction_modifier_container">
+                    <div class="bold">Death Watch</div>
+                    <div><input type="checkbox" id="deathwatchDetachmentFuror" /> Detachment - Furor Tactics</div>
+                    <div><input type="checkbox" id="deathwatchDetachmentMalleus" /> Detachment - Malleus Tactics</div>
+                </div>
+                <div id="attacker_faction-drukhari" class="faction_modifier_container">
+                    <div class="bold">Drukhari</div>
+                    <div><input type="checkbox" id="drukhariArmyRulePower" /> Army Rule - Power From Pain (spending a pain token on this unit)</div>
+                </div>
+                <div id="attacker_faction-genestealerCults" class="faction_modifier_container">
+                    <div class="bold">Genestealer Cults</div>
+                    <div><input type="checkbox" id="GSCDetachmentBelow" /> Detachment - They Came From Below (unit was deployed from reinforcements)</div>
+                </div>
+                <div id="attacker_faction-greyKnights" class="faction_modifier_container">
+                    <div class="bold">Grey Knights</div>
+                    
+                </div>
+                <div id="attacker_faction-imperialKnights" class="faction_modifier_container">
+                    <div class="bold">Imperial Knights</div>
+                    <!-- <div><input type="checkbox" id="imperialKnightsArmyRuleAttackerHonored" /> Army Rule - Honored (army has become honored)</div> -->
+                    <div><input type="checkbox" id="imperialKnightsArmyRuleLayLow" /> Army Rule - Lay Low the Tyrant</div>
+                </div>
+                <div id="attacker_faction-leaguesofVotann" class="faction_modifier_container">
+                    <div class="bold">Leagues of Votann</div>
+                    <div><input type="checkbox" id="leagueArmyRuleAncestorsOne" /> Army Rule - Eye of the Ancestor (1 grudge token on defender)</div>
+                    <div><input type="checkbox" id="leagueArmyRuleAncestorsTwo" /> Army Rule - Eye of the Ancestor (2 grudge tokens on defender)</div>
+                </div>
+                <div id="attacker_faction-necrons" class="faction_modifier_container">
+                    <div class="bold">Necrons</div>
+                    <div><input type="checkbox" id="necronsDetachmentCommand" /> Detachment - Command Protocols (being led by a character)</div>
+                </div>
+                <div id="attacker_faction-orks" class="faction_modifier_container">
+                    <div class="bold">Orks</div>
+                    <div><input type="checkbox" id="orksArmyRuleAttacker" /> Army Rule - Waaagh!</div>
+                    <div><input type="checkbox" id="orksDetachmentGetStuckIn" /> Detachment - Get Stuck In!</div>
+                </div>
+                <div id="attacker_faction-spaceWolves" class="faction_modifier_container">
+                    <div class="bold">Space Wolves</div>
+                    <div><input type="checkbox" id="spaceWolvesDetachmentSagaWarrior" /> Detachment - Saga of the Warrior Born</div>
+                    <div><input type="checkbox" id="spaceWolvesDetachmentSagaBeastslayer" /> Detachment - Saga of the Beastslayer</div>
+                </div>
+                <div id="attacker_faction-tauEmpire" class="faction_modifier_container">
+                    <div class="bold">T'au Empire</div>
+                    <div><input type="checkbox" id="tauArmyRuleAttacker" /> Army Rule - Guided</div>
+                    <div><input type="checkbox" id="tauArmyRuleAttackerMarkerlight" /> Army Rule - observer has markerlight?</div>
+                    <div><input type="checkbox" id="tauDetachmentKauyon" /> Detachment - Kauyon (its battle round 3 or more)</div>
+                </div>
+                <div id="attacker_faction-thousandSons" class="faction_modifier_container">
+                    <div class="bold">Thousand Sons</div>
+                    <div><input type="checkbox" id="thousandSonsArmyRuleCabalTwist" /> Army Rule - Cabal of Sorcerers - Twist of Fate</div>
+                    <div><input type="checkbox" id="thousandSonsDetachmentMalevolent" /> Detachment - Malevolent Charge</div>
+                    <div><input type="checkbox" id="thousandSonsDetachmentMaelstrom" /> Detachment - Psychic Maelstrom</div>
+                    <div><input type="checkbox" id="thousandSonsDetachmentImmaterium" /> Detachment - Wrath of the Immaterium</div>
+                </div>
+                <div id="attacker_faction-tyranids" class="faction_modifier_container">
+                    <div class="bold">Tyranids</div>
+                    <div><input type="checkbox" id="tyranidDetachmentSwarming" /> Detachment - Hyper Adaption - Swarming Instincts</div>
+                    <div><input type="checkbox" id="tyranidDetachmentAggression" /> Detachment - Hyper Adaption - Hyper-Aggression</div>
+                </div>
+                <div id="attacker_faction-worldEaters" class="faction_modifier_container">
+                    <div class="bold">World Eaters</div>
+                    <div><input type="checkbox" id="worldEatersArmyRuleMartial" /> Army Rule - Blessings of Khorne - Martial Excellence</div>
+                    <div><input type="checkbox" id="worldEatersArmyRuleBlades" /> Army Rule - Blessings of Khorne - Warp Blades</div>
+                    <div><input type="checkbox" id="worldEatersDetachmentRelentless" /> Detachment - Relentless Rage (charged this turn)</div>
+                </div>
+                <div id="attacker_faction-adeptusTitanicus" class="faction_modifier_container">
+                    <div class="bold">Adeptus Titanicus</div>
+                </div>
+            </div>
+            <div class="factionDefender">
+                <div id="defender_faction-adeptaSororitas" class="faction_modifier_container">
+                    <div class="bold">Adepta Sororitas</div>
+                    
+                </div>
+                <div id="defender_faction-adeptusCustodes" class="faction_modifier_container">
+                    <div class="bold">Adeptus Custodes</div>
+                    <div><input type="checkbox" id="custodesArmyRuleKaptaris" /> Army Rule - Martial Ka'tah - Kaptaris</div>
+                    <div><input type="checkbox" id="custodesDetachmentRuleAegis" /> Detachment Rule - Aegis of the Emperor</div>
+                </div>
+                <div id="defender_faction-adeptusMechanicus" class="faction_modifier_container">
+                    <div class="bold">Adeptus Mechanicus</div>
+                    <div><input type="checkbox" id="mechanicusArmyRuleDefenderProtector" /> Army Rule - Protector Imperative (unit within deployment zone)</div>
+                </div>
+                <div id="defender_faction-aeldari" class="faction_modifier_container">
+                    <div class="bold">Aeldari</div>
+                    
+                </div>
+                <div id="defender_faction-agentsoftheImperium" class="faction_modifier_container">
+                    <div class="bold">Agents of the Imperium</div>
+                    
+                </div>
+                <div id="defender_faction-astraMilitarum" class="faction_modifier_container">
+                    <div class="bold">Astra Militarum</div>
+                    <div><input type="checkbox" id="astraMilitarumArmyRuleAttackerCover" /> Army Rule - Take Cover!</div>
+                </div>
+                <div id="defender_faction-blackTemplars" class="faction_modifier_container">
+                    <div class="bold">Black Templars</div>
+                    <div><input type="checkbox" id="blackTemplarsDetachmentTemplarVowsHonour" /> Detachment - Uphold the Honour of the Emperor</div>
+                    <div><input type="checkbox" id="blackTemplarsDetachmentTemplarVowsWitchDefender" /> Detachment - Abhor the Witch, Destroy the Witch</div>
+                </div>
+                <div id="defender_faction-bloodAngels" class="faction_modifier_container">
+                    <div class="bold">Blood Angels</div>
+                    
+                </div>
+                <div id="defender_faction-chaosDaemons" class="faction_modifier_container">
+                    <div class="bold">Chaos Daemons</div>
+                    
+                </div>
+                <div id="defender_faction-chaosKnights" class="faction_modifier_container">
+                    <div class="bold">Chaos Knights</div>
+                    <div><input type="checkbox" id="chaosKnightsArmyRuleDefenderDoom" /> Army Rule - Doom and Darkness (Attacker is battle-shocked)</div>
+                </div>
+                <div id="defender_faction-chaosSpaceMarines" class="faction_modifier_container">
+                    <div class="bold">Chaos Space Marines</div>
+                    
+                </div>
+                <div id="defender_faction-darkAngels" class="faction_modifier_container">
+                    <div class="bold">Dark Angels</div>
+                    
+                </div>
+                <div id="defender_faction-deathGuard" class="faction_modifier_container">
+                    <div class="bold">Death Guard</div>
+                    
+                </div>
+                <div id="defender_faction-deathwatch" class="faction_modifier_container">
+                    <div class="bold">Death Watch</div>
+                    
+                </div>
+                <div id="defender_faction-drukhari" class="faction_modifier_container">
+                    <div class="bold">Drukhari</div>
+                    
+                </div>
+                <div id="defender_faction-genestealerCults" class="faction_modifier_container">
+                    <div class="bold">Genestealer Cults</div>
+                    
+                </div>
+                <div id="defender_faction-greyKnights" class="faction_modifier_container">
+                    <div class="bold">Grey Knights</div>
+                    
+                </div>
+                <div id="defender_faction-imperialKnights" class="faction_modifier_container">
+                    <div class="bold">Imperial Knights</div>
+                    <div><input type="checkbox" id="imperialKnightsArmyRuleDefenderHonored" /> Army Rule - Honored (army has become honored)</div>
+                    <div><input type="checkbox" id="imperialKnightsDetachmentIndomitable" /> Detachment - Indomitable Heroes</div>
+                </div>
+                <div id="defender_faction-leaguesofVotann" class="faction_modifier_container">
+                    <div class="bold">Leagues of Votann</div>
+                    
+                </div>
+                <div id="defender_faction-necrons" class="faction_modifier_container">
+                    <div class="bold">Necrons</div>
+                    <div><input type="checkbox" id="necronsArmyRuleReanimation" /> Army Rule - Reanimation Protocols (tick this if only the attacker was going to do any damage in the battle round)</div>
+                </div>
+                <div id="defender_faction-orks" class="faction_modifier_container">
+                    <div class="bold">Orks</div>
+                    <div><input type="checkbox" id="orksArmyRuleDefender" /> Army Rule - Waaagh!</div>
+                </div>
+                <div id="defender_faction-adeptusAstartes" class="faction_modifier_container">
+                    <div class="bold">Adeptus Astartes</div>
+                    
+                </div>
+                <div id="defender_faction-spaceWolves" class="faction_modifier_container">
+                    <div class="bold">Space Wolves</div>
+                    <div><input type="checkbox" id="spaceWolvesDetachmentSagaBear" /> Detachment - Saga of the Bear</div>
+                </div>
+                <div id="defender_faction-tauEmpire" class="faction_modifier_container">
+                    <div class="bold">T'au Empire</div>
+                    
+                </div>
+                <div id="defender_faction-thousandSons" class="faction_modifier_container">
+                    <div class="bold">Thousand Sons</div>
+                    <div><input type="checkbox" id="thousandSonsArmyRuleCabalWeaver" /> Army Rule - Cabal of Sorcerers - Weaver of Fates</div>
+                </div>
+                <div id="defender_faction-tyranids" class="faction_modifier_container">
+                    <div class="bold">Tyranids</div>
+                    
+                </div>
+                <div id="defender_faction-worldEaters" class="faction_modifier_container">
+                    <div class="bold">World Eaters</div>
+                    <div><input type="checkbox" id="worldEatersArmyRuleDevotion" /> Army Rule - Blessings of Khorne - Wrathful Devotion</div>
+                </div>
+                <div id="defender_faction-adeptusTitanicus" class="faction_modifier_container">
+                    <div class="bold">Adeptus Titanicus</div>
+                </div>
+            </div>
+        </div>
+        <div class="bold">Modifiers</div><button class="button" id="modifierToggle">toggle</button>
+        <div class="flex_container modifier_container" id="modifiers" style="height:0px;">
+            <div class="attacker">
+                <div class="modifier_title bold">Attacker</div>
+                <div class="modifier_item">
+                    <div>Critical Hit</div>
+                    <input type="text" id="criticalHit" value="6"/>
+                </div>
+                <div class="modifier_item">
+                    <div>Critical Wound</div>
+                    <input type="text" id="criticalWound" value="6"/>
+                </div>
+                <div class="modifier_item"><input type="checkbox" id="assault" /> Assault</div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="rapidFire" /> Rapid Fire
+                    <input type="text" id="rapidFireCount" />
+                </div>
+                <div class="modifier_item"><input type="checkbox" id="ignoresCover" /> Ignores Cover</div>
+                <div class="modifier_item"><input type="checkbox" id="twinLinked" /> Twin Linked</div>
+                <div class="modifier_item"><input type="checkbox" id="pistol" /> Pistol</div>
+                <div class="modifier_item"><input type="checkbox" id="torrent" /> Torrent</div>
+                <div class="modifier_item"><input type="checkbox" id="lethalHits" /> Lethal Hits</div>
+                <div class="modifier_item"><input type="checkbox" id="lance" /> Lance</div>
+                <div class="modifier_item"><input type="checkbox" id="indirectFire" /> Indirect Fire</div>
+                <div class="modifier_item"><input type="checkbox" id="precision" /> Precision</div>
+                <div class="modifier_item"><input type="checkbox" id="psychic" /> Psychic</div>
+                <div class="modifier_item"><input type="checkbox" id="blast" /> Blast</div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="melta" /> Melta
+                    <input type="text" id="meltaCount" />
+                </div>
+                <div class="modifier_item"><input type="checkbox" id="heavy" /> heavy</div>
+                <div class="modifier_item"><input type="checkbox" id="hazardous" /> hazardous</div>
+                <div class="modifier_item"><input type="checkbox" id="devastatingWounds" /> Devastating Wounds</div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="sustainedHits" /> Sustained Hits
+                    <input type="text" id="sustainedHitsCount" />
+                </div>
+                <div class="modifier_item"><input type="checkbox" id="extraAttacks" /> Extra Attacks</div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="anti" /> Anti
+                    <input type="text" id="antiType" />
+                    <input type="text" id="antiValue" />
+                </div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="reroll1HitRoll" /> Reroll a single hit roll
+                </div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="reroll1Hits" /> Reroll hits of 1
+                </div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="rerollAllHits" /> Reroll all hits
+                </div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="reroll1WoundRoll" /> Reroll a single wound roll
+                </div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="reroll1Wounds" /> Reroll wounds of 1
+                </div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="rerollAllWounds" /> Reroll all wounds
+                </div>
+            </div>
+            <div class="defender">
+                <div class="modifier_title bold">Defender</div>
+                <div class="modifier_item">
+                    Key Words
+                    <input type="text" id="defenderTags" />
+                </div>
+                <div class="modifier_item"><input type="checkbox" id="cover" /> Cover</div>
+                <div class="modifier_item"><input type="checkbox" id="stealth" /> Stealth</div>
+                <div class="modifier_item">
+                    <input type="checkbox" id="rerollAllSaves" /> Reroll all saves
+                </div>
+            </div>
+        </div>
+        <button class="button button_calculate" id="calculate">Calculate</button>
+        <div class="information_container" id="informationContainer">
+
+        </div>
+        <div class="chart_container">
+            <div>All Results</div>
+            <div class="chart" id="chart"></div>
+        </div>
+    </div>
+    <div id="testOut"></div>
+    <script src="./js/data.js"></script>
+    <script src="./js/main.js"></script>
+  </body>
+</html>
